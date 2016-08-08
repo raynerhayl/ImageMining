@@ -1,3 +1,5 @@
+import java.awt.*;
+
 /**
  * Created by Haylem on 5/08/2016.
  */
@@ -5,15 +7,13 @@ public class Helper {
 
     public static int[] expandRGB(int pixel) {
 
-        int red = (pixel>>16)&0x0ff;
-        int green=(pixel>>8) &0x0ff;
-        int blue= (pixel)    &0x0ff;
+        Color c = new Color(pixel);
 
-        return new int[]{red,green,blue};
+        return new int[]{c.getRed(),c.getGreen(),c.getBlue()};
     }
 
-    public static int contractRGB(int[] argb){
-        return ((argb[0]&0x0ff)<<16)|((argb[1]&0x0ff)<<8)|(argb[2]&0x0ff);
+    public static int contractRGB(int[] rgb){
+        return new Color(rgb[0],rgb[1],rgb[2]).getRGB();
     }
 
 

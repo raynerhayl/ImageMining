@@ -10,17 +10,21 @@ public class Mask {
 
     private int[][] m;
 
+    private int[][] newImg;
+
     public Mask(int[][] m){
         this.m = m;
     }
 
     public void apply(BufferedImage img){
-        for(int col = 0; col < m.length; col++){
-            for(int row = 0; row < m[col].length; row++){
+        newImg = new int[img.getWidth()][img.getHeight()];
+        for(int col = 1; col < m.length; col++){
+            for(int row = 1; row < m[col].length; row++){
                 int[] rgb = Helper.expandRGB(img.getRGB(x + col, y + col));
                 rgb[0] = rgb[0] * m[col][row];
                 rgb[1] = rgb[1] * m[col][row];
                 rgb[2] = rgb[2] * m[col][row];
+
                 img.setRGB(x+col,y+col, Helper.contractRGB(rgb));
             }
         }

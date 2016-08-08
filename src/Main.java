@@ -23,7 +23,7 @@ public class Main {
             BufferedImage image = ImageIO.read(new File("test-pattern.tif"));
             UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
 
-            Mask sobel = new Mask(new int[][]{{1,2,2},{2,2,1},{1,1,1}});
+            Mask sobel = new Mask(new int[][]{{1,1,1},{1,1,1},{1,1,1}});
 
             for(int col = 0; col < image.getWidth()-3; col++){
                 for(int row = 0; row < image.getHeight()-3; row++){
