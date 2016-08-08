@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="jai_codec">
+    <CLASSES>
+      <root url="jar://C:/Program Files/Java/jai_codec.jar!/" />
+      <root url="jar://C:/Program Files/Java/jai_core.jar!/" />
+      <root url="jar://C:/Program Files/Java/jai_imageio-1.1.jar!/" />
+      <root url="jar://C:/Program Files/Java/ecs100.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://C:/Program Files/Java/ecs100.jar!/" />
+    </SOURCES>
+  </library>
+</component>
