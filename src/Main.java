@@ -24,16 +24,11 @@ public class Main {
         try {
             // retrieve image
             BufferedImage image = ImageIO.read(new File("test-pattern.tif"));
-            UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
+            //UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
 
-            Mask sobel = new Mask(new int[][]{{1,1,1},{1,1,1},{1,1,1}});
+            SobleFilter sobel = new SobleFilter();
+            sobel.apply(image);
 
-            for(int col = 0; col < image.getWidth()-3; col++){
-                for(int row = 0; row < image.getHeight()-3; row++){
-                    sobel.apply(image);
-                    sobel.setPos(col,row);
-                }
-            }
             UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
 
 
