@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 public class Helper {
 
 
+
     public static int[] expandRGB(int pixel) {
 
         Color c = new Color(pixel);

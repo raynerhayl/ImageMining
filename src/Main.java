@@ -23,11 +23,18 @@ public class Main {
     public void loadImage(){
         try {
             // retrieve image
-            BufferedImage image = ImageIO.read(new File("test-pattern.tif"));
+            //BufferedImage image = ImageIO.read(new File("test-pattern.tif"));
+            BufferedImage image = ImageIO.read(new File("ckt-board-saltpep.tif"));
+            //BufferedImage image = ImageIO.read(new File("blurry-moon.tif"));
+
             //UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
 
             SobleFilter sobel = new SobleFilter();
-            sobel.apply(image);
+
+            NoiseMask noise = new NoiseMask();
+
+            noise.apply(image);
+            //sobel.apply(image);
 
             UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
 
