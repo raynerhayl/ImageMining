@@ -1,5 +1,6 @@
 
 import ecs100.*;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.PackedColorModel;
@@ -11,8 +12,6 @@ import java.io.IOException;
  */
 
 
-
-
 public class Main {
 
     private final int LEFT = 20;
@@ -22,17 +21,44 @@ public class Main {
         UI.initialise();
         UI.addButton("Edge Detection", this::edgeDetection);
         UI.addButton("Noise Removal", this::noiseRemoval);
+        UI.addButton("DeBlur", this::deBlur);
     }
 
-    public void noiseRemoval(){
+    public void deBlur(){
+        UI.clearGraphics();
+        String fileName = "blurry-moon.tif";
+        UI.println("Loading image: " + fileName);
+        BufferedImage img = loadImage(fileName);
+        if (img == null) {
+            UI.println("Failed to load image, please try again.");
+        } else {
+            printDivide();
+            UI.println("Displaying un-edited image");
+            UI.drawImage(img, LEFT, TOP);
+
+            boolean edit = UI.askBoolean("Run deBlur Y/N?");
+            if (edit) {
+                LaplaceFilter laplace = new LaplaceFilter();
+                laplace.apply(img);
+                UI.println("Displaying edited image.");
+                UI.drawImage(img, LEFT, TOP);
+            } else {
+                return;
+            }
+        }
+    }
+
+
+    public void noiseRemoval() {
         UI.clearText();
         UI.clearGraphics();
         String fileName = "ckt-board-saltpep.tif";
         //String fileName = "fce5.gif";
 
-        UI.println("Loading image: "+fileName);
+        UI.println("Loading image: " + fileName);
+
         BufferedImage img = loadImage(fileName);
-        if(img == null){
+        if (img == null) {
             UI.println("Failed to load image, please try again.");
         } else {
             printDivide();
@@ -40,13 +66,13 @@ public class Main {
             UI.drawImage(img, LEFT, TOP);
 
             boolean edit = UI.askBoolean("Run noise detection Y/N");
-            if(edit){
-                NoiseMask noise = new NoiseMask();
 
-                while(edit == true){
+                if (edit) {
+                    NoiseMask noise = new NoiseMask();
+
                     printDivide();
                     boolean median = UI.askBoolean("Median Method (Y) Mean Method (N)");
-                    if(median){
+                    if (median) {
                         noise.median();
 
                         UI.println("Cancelling noise using median method.");
@@ -63,17 +89,16 @@ public class Main {
                     UI.println("Displaying edited image.");
                     UI.drawImage(img, LEFT, TOP);
 
-                }
             }
         }
     }
 
-    public void edgeDetection(){
+    public void edgeDetection() {
         UI.clearGraphics();
         String fileName = "test-pattern.tif";
-        UI.println("Loading image: "+fileName);
-        BufferedImage img = loadImage("test-pattern.tif");
-        if(img == null){
+        UI.println("Loading image: " + fileName);
+        BufferedImage img = loadImage(fileName);
+        if (img == null) {
             UI.println("Failed to load image, please try again.");
         } else {
             printDivide();
@@ -81,7 +106,7 @@ public class Main {
             UI.drawImage(img, LEFT, TOP);
 
             boolean edit = UI.askBoolean("Run edge detection Y/N?");
-            if(edit){
+            if (edit) {
                 SobleFilter sobel = new SobleFilter();
                 sobel.apply(img);
                 UI.println("Displaying edited image.");
@@ -92,12 +117,12 @@ public class Main {
         }
     }
 
-    public void printDivide(){
+    public void printDivide() {
         UI.println("---------------");
     }
 
 
-    public BufferedImage loadImage(String fileName){
+    public BufferedImage loadImage(String fileName) {
         try {
             BufferedImage image = ImageIO.read(new File(fileName));
 
@@ -108,13 +133,13 @@ public class Main {
         return null;
     }
 
-    public void scale (int[] values, int scaler){
+    public void scale(int[] values, int scaler) {
         values[0] = values[0] * scaler;
         values[1] = values[1] * scaler;
         values[2] = values[2] * scaler;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new Main();
     }
 }

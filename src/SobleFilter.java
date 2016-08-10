@@ -46,6 +46,5 @@ public class SobleFilter extends Filter {
         int val = (int) Math.sqrt(total);
         img.setRGB(col, row, val);
 
-
     }
 }
