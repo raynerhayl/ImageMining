@@ -34,7 +34,7 @@ public class LaplaceFilter extends Filter {
 
     }
 
-    @Override
+    /*@Override
     void applyMasks(BufferedImage img, Color[][] copy, int col, int row) {
         int total = 0;
 
@@ -46,9 +46,9 @@ public class LaplaceFilter extends Filter {
 
         int val = (int)(total);
         img.setRGB(col, row, copy[col][row].getRGB() + val);
-    }
+    }*/
 
-    /*@Override
+    @Override
     void applyMasks(BufferedImage img, Color[][] copy, int col, int row) {
         Mask m = masks.get(0);
         double redTotal = ((m.getM()[0][0] * (double) copy[col - 1][row - 1].getRed()) + (m.getM()[0][1] * (double) copy[col][row - 1].getRed()) + (m.getM()[0][2] * (double) copy[col + 1][row - 1].getRed()) +
@@ -64,22 +64,15 @@ public class LaplaceFilter extends Filter {
                 (m.getM()[2][0] * (double) copy[col - 1][row + 1].getBlue()) + (m.getM()[2][1] * (double) copy[col][row + 1].getBlue()) + (m.getM()[2][2] * (double) copy[col + 1][row + 1].getBlue()));
 
 
-        if (redTotal < 0) {
-            redTotal = 0;
-        }
+        redTotal = Math.min(255,Math.max(redTotal,0));
+        greenTotal = Math.min(255,Math.max(greenTotal,0));
+        blueTotal = Math.min(255,Math.max(blueTotal,0));
 
-        if (blueTotal < 0) {
-            blueTotal = 0;
-        }
-
-        if (greenTotal < 0) {
-            greenTotal = 0;
-        }
 
         Color val = new Color((int) redTotal, (int) greenTotal, (int) blueTotal);
         //copy[col][row] = val;
         img.setRGB(col, row, val.getRGB());
-    }*/
+    }
 }
 
 
