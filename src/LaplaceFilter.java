@@ -10,6 +10,15 @@ public class LaplaceFilter extends Filter {
      * Created by Haylem on 5/08/2016.
      */
 
+    private boolean blur = false;
+
+    public void blur(){
+        blur = true;
+    }
+
+    public void shaerpen(){
+        blur = false;
+    }
 
     @Override
     public void apply(BufferedImage img) {
@@ -30,6 +39,11 @@ public class LaplaceFilter extends Filter {
                 new double[]{0, -1.0, 0},
                 new double[]{-1.0, 5.0, -1.0},
                 new double[]{0, -1.0, 0}}),
+
+                new Mask(new double[][]{
+                        new double[]{1.0/9.0,1.0/9.0, 1.0/9.0},
+                        new double[]{1.0/9.0, 1.0/9.0, 1.0/9.0},
+                        new double[]{1.0/9.0,1.0/9.0, 1.0/9.0}})
         });
 
     }
@@ -50,7 +64,13 @@ public class LaplaceFilter extends Filter {
 
     @Override
     void applyMasks(BufferedImage img, Color[][] copy, int col, int row) {
-        Mask m = masks.get(0);
+        Mask m;
+        if(blur){
+            m = masks.get(1);
+        } else {
+            m = masks.get(0);
+        }
+
         double redTotal = ((m.getM()[0][0] * (double) copy[col - 1][row - 1].getRed()) + (m.getM()[0][1] * (double) copy[col][row - 1].getRed()) + (m.getM()[0][2] * (double) copy[col + 1][row - 1].getRed()) +
                 (m.getM()[1][0] * (double) copy[col - 1][row].getRed()) + (m.getM()[1][1] * (double) copy[col][row].getRed()) + (m.getM()[1][2] * (double) copy[col + 1][row].getRed()) +
                 (m.getM()[2][0] * (double) copy[col - 1][row + 1].getRed()) + (m.getM()[2][1] * (double) copy[col][row + 1].getRed()) + (m.getM()[2][2] * (double) copy[col + 1][row + 1].getRed()));
@@ -64,9 +84,9 @@ public class LaplaceFilter extends Filter {
                 (m.getM()[2][0] * (double) copy[col - 1][row + 1].getBlue()) + (m.getM()[2][1] * (double) copy[col][row + 1].getBlue()) + (m.getM()[2][2] * (double) copy[col + 1][row + 1].getBlue()));
 
 
-        redTotal = Math.min(255,Math.max(redTotal,0));
-        greenTotal = Math.min(255,Math.max(greenTotal,0));
-        blueTotal = Math.min(255,Math.max(blueTotal,0));
+        redTotal = Math.min(255, Math.max(redTotal, 0));
+        greenTotal = Math.min(255, Math.max(greenTotal, 0));
+        blueTotal = Math.min(255, Math.max(blueTotal, 0));
 
 
         Color val = new Color((int) redTotal, (int) greenTotal, (int) blueTotal);

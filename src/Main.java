@@ -17,11 +17,63 @@ public class Main {
     private final int LEFT = 20;
     private final int TOP = 20;
 
+    private Galaxy galaxy = new Galaxy();
+
     public Main() {
         UI.initialise();
         UI.addButton("Edge Detection", this::edgeDetection);
         UI.addButton("Noise Removal", this::noiseRemoval);
         UI.addButton("DeBlur", this::deBlur);
+        UI.addButton("Galaxy", this::galaxy);
+        UI.addSlider("Threshold Strength",125,255,20,(double v)->{
+            galaxy.setThreshold((int)v);
+            if(galaxy.isImgSet()){
+
+                galaxy.apply();
+                galaxy.draw(LEFT, TOP);
+            }
+        });
+    }
+
+
+    public void galaxy(){
+        UI.clearGraphics();
+        UI.clearText();
+        String fileName = "hubble.tif";
+        UI.println("Loading image: "+fileName);
+        BufferedImage img = loadImage(fileName);
+
+
+
+        if(img == null){
+            UI.println("Failed to load image, please try again.");
+        } else {
+            printDivide();
+            UI.println("Displaying un-edited image.");
+            UI.drawImage(img, LEFT,TOP);
+
+            if(UI.askBoolean("Run blur Y/N")){
+                LaplaceFilter laplaceFilter = new LaplaceFilter();
+                laplaceFilter.blur();
+
+                laplaceFilter.apply(img);
+
+                galaxy.setImg(img);
+
+                UI.println("Displaying blured image.");
+                UI.drawImage(img, LEFT,TOP);
+
+                if(UI.askBoolean("Run threshold Y/N")){
+                    UI.println("Running threshold action.");
+                    galaxy.apply(img);
+
+                    UI.drawImage(img, LEFT,TOP);
+
+                    UI.println("Adjust slider to change threshold,\n image will redraw automatically.");
+                }
+            }
+        }
+
     }
 
     public void deBlur(){
