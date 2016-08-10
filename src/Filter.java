@@ -27,20 +27,9 @@ public abstract class Filter {
     }
 
 
-    public void apply(BufferedImage img) {
+    public abstract void apply(BufferedImage img);
 
-        Color[][] copy = Helper.copy(img);
-        for (int col = 1; col < img.getWidth() - 1; col++) {
-            for (int row = 1; row < img.getHeight() - 1; row++) {
-
-                int val = applyMasks(copy, col, row);
-
-                img.setRGB(col, row, val);
-            }
-        }
-    }
-
-    abstract int applyMasks(Color[][] copy, int col, int row);
+    abstract void applyMasks(BufferedImage img, Color[][] copy, int col, int row);
 
 
     public void setPos(int x, int y) {

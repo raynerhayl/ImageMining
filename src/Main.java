@@ -2,6 +2,7 @@
 import ecs100.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.PackedColorModel;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,34 +15,97 @@ import java.io.IOException;
 
 public class Main {
 
+    private final int LEFT = 20;
+    private final int TOP = 20;
 
     public Main() {
         UI.initialise();
-        loadImage();
+        UI.addButton("Edge Detection", this::edgeDetection);
+        UI.addButton("Noise Removal", this::noiseRemoval);
     }
 
-    public void loadImage(){
+    public void noiseRemoval(){
+        UI.clearText();
+        UI.clearGraphics();
+        String fileName = "ckt-board-saltpep.tif";
+        //String fileName = "fce5.gif";
+
+        UI.println("Loading image: "+fileName);
+        BufferedImage img = loadImage(fileName);
+        if(img == null){
+            UI.println("Failed to load image, please try again.");
+        } else {
+            printDivide();
+            UI.println("Displaying un-edited image");
+            UI.drawImage(img, LEFT, TOP);
+
+            boolean edit = UI.askBoolean("Run noise detection Y/N");
+            if(edit){
+                NoiseMask noise = new NoiseMask();
+
+                while(edit == true){
+                    printDivide();
+                    boolean median = UI.askBoolean("Median Method (Y) Mean Method (N)");
+                    if(median){
+                        noise.median();
+
+                        UI.println("Cancelling noise using median method.");
+                        noise.apply(img);
+
+                    } else {
+                        noise.mean();
+
+                        UI.println("Cancelling noise using mean method.");
+                        noise.apply(img);
+
+                    }
+
+                    UI.println("Displaying edited image.");
+                    UI.drawImage(img, LEFT, TOP);
+
+                }
+            }
+        }
+    }
+
+    public void edgeDetection(){
+        UI.clearGraphics();
+        String fileName = "test-pattern.tif";
+        UI.println("Loading image: "+fileName);
+        BufferedImage img = loadImage("test-pattern.tif");
+        if(img == null){
+            UI.println("Failed to load image, please try again.");
+        } else {
+            printDivide();
+            UI.println("Displaying un-edited image");
+            UI.drawImage(img, LEFT, TOP);
+
+            boolean edit = UI.askBoolean("Run edge detection Y/N?");
+            if(edit){
+                SobleFilter sobel = new SobleFilter();
+                sobel.apply(img);
+                UI.println("Displaying edited image.");
+                UI.drawImage(img, LEFT, TOP);
+            } else {
+                return;
+            }
+        }
+    }
+
+    public void printDivide(){
+        UI.println("---------------");
+    }
+
+
+    public BufferedImage loadImage(String fileName){
         try {
-            // retrieve image
-            //BufferedImage image = ImageIO.read(new File("test-pattern.tif"));
-            BufferedImage image = ImageIO.read(new File("ckt-board-saltpep.tif"));
-            //BufferedImage image = ImageIO.read(new File("blurry-moon.tif"));
+            BufferedImage image = ImageIO.read(new File(fileName));
 
-            //UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
-
-            SobleFilter sobel = new SobleFilter();
-
-            NoiseMask noise = new NoiseMask();
-
-            noise.apply(image);
-            //sobel.apply(image);
-
-            UI.drawImage(image, 0,0,image.getWidth(),image.getHeight());
-
-
+            return image;
         } catch (IOException e) {
 
         }
+        return null;
     }
 
     public void scale (int[] values, int scaler){

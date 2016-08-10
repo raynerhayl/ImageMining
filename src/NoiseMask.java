@@ -1,3 +1,4 @@
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.awt.Color;
 
@@ -6,6 +7,8 @@ import java.awt.Color;
  */
 public class NoiseMask extends Filter {
 
+    private boolean median = true;
+
     public NoiseMask() {
       /*  super(new Mask[]{new Mask(new int[][]{new int[]{0, -1, 0},
                                               new int[]{-1, 5, -1},
@@ -13,9 +16,9 @@ public class NoiseMask extends Filter {
 
         });*/
 
-        super(new Mask[]{new Mask(new int[][]{new int[]{-1, -1, -1},
-                new int[]{-1, 9, -1},
-                new int[]{-1, -1, -1}}),
+        super(new Mask[]{new Mask(new double[][]{new double[]{1.0, 1.0, 1.0},
+                new double[]{1.0, 1.0, 1.0},
+                new double[]{1.0, 1.0, 1.0}}),
 
         });
 
@@ -29,11 +32,29 @@ public class NoiseMask extends Filter {
     }
 
     @Override
-    int applyMasks(Color[][] copy, int col, int row) {
-        return medianMask(copy, col, row);
+    public void apply(BufferedImage img) {
+        Color[][] copy = Helper.copy(img);
+        for (int col = 1; col < img.getWidth() - 1; col++) {
+            for (int row = 1; row < img.getHeight() - 1; row++) {
+
+                applyMasks(img,copy, col, row);
+
+            }
+        }
+
+        Helper.copyBack(copy, img);
     }
 
-    private int medianMask(Color[][] copy, int col, int row) {
+    @Override
+    void  applyMasks(BufferedImage img,Color[][]copy, int col, int row) {
+        if(median) {
+            medianMask(img, copy, col, row);
+        } else {
+            meanMask(img, copy, col, row);
+        }
+    }
+
+    private void medianMask(BufferedImage img,Color[][] copy, int col, int row) {
 
         int[] redNums = new int[]{copy[col - 1][row - 1].getRed(), copy[col][row - 1].getRed(), copy[col + 1][row - 1].getRed(),
                 copy[col - 1][row].getRed(), copy[col][row].getRed(), copy[col + 1][row].getRed(),
@@ -54,22 +75,37 @@ public class NoiseMask extends Filter {
         int medianRed = median(redNums);
         int medianGreen = median(greenNums);
         int medianBlue = median(blueNums);
-        
-        //return median(rgbNums);
-        return new Color(medianRed,medianGreen,medianBlue).getRGB();
 
+        //return median(rgbNums);
+
+        int val = new Color(medianRed,medianGreen,medianBlue).getRGB();
+        //img.setRGB(col, row, val);
+        copy[col][row] = new Color(val);
     }
 
-    private int normalMask(Color[][] copy, int col, int row) {
-        int total = 0;
+    private void meanMask(BufferedImage img, Color[][] copy, int col, int row) {
+        double total = 0;
 
+        int count = 0;
         for (Mask m : masks) {
-            total += Math.pow((m.getM()[0][0] * copy[col - 1][row - 1].getRGB()) + (m.getM()[0][1] * copy[col][row - 1].getRGB()) + (m.getM()[0][2] * copy[col + 1][row - 1].getRGB()) +
-                    (m.getM()[1][0] * copy[col - 1][row].getRGB()) + (m.getM()[1][1] * copy[col][row].getRGB()) + (m.getM()[1][2] * copy[col + 1][row].getRGB()) +
-                    (m.getM()[2][0] * copy[col - 1][row + 1].getRGB()) + (m.getM()[2][1] * copy[col][row + 1].getRGB()) + (m.getM()[2][2] * copy[col + 1][row + 1].getRGB()), 2);
+            count ++;
+            total += (m.getM()[0][0] * (double)copy[col - 1][row - 1].getRGB()) + (m.getM()[0][1] * (double)copy[col][row - 1].getRGB()) + (m.getM()[0][2] * (double)copy[col + 1][row - 1].getRGB()) +
+                     (m.getM()[1][0] * (double)copy[col - 1][row].getRGB()) + (m.getM()[1][1] * (double)copy[col][row].getRGB()) + (m.getM()[1][2] * (double)copy[col + 1][row].getRGB()) +
+                     (m.getM()[2][0] * (double)copy[col - 1][row + 1].getRGB()) + (m.getM()[2][1] * (double)copy[col][row + 1].getRGB()) + (m.getM()[2][2] * (double)copy[col + 1][row + 1].getRGB());
         }
 
-        return (int) Math.sqrt(total);
+        total = copy[col - 1][row - 1].getRGB() + copy[col][row - 1].getRGB() + copy[col + 1][row - 1].getRGB() +
+                copy[col - 1][row].getRGB() + copy[col][row].getRGB() + copy[col + 1][row].getRGB() +
+                copy[col - 1][row + 1].getRGB() + copy[col][row + 1].getRGB() + copy[col + 1][row + 1].getRGB();
+
+
+        int val = (int)(total / 9.0);
+
+        System.out.println(total);
+
+
+        copy[col][row] = new Color(val);
+        img.setRGB(col,row,val);
     }
 
     private int median(int[] nums) {
@@ -92,5 +128,13 @@ public class NoiseMask extends Filter {
         }
 
         return oNums.get(oNums.size() / 2);
+    }
+
+    public void median(){
+        median = true;
+    }
+
+    public void mean(){
+        median = false;
     }
 }

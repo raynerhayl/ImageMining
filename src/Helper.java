@@ -25,6 +25,15 @@ public class Helper {
         return copy;
     }
 
+    public static void copyBack(Color[][] copy, BufferedImage img){
+        for(int col = 0; col < copy.length; col++){
+            for(int row = 0; row < copy[col].length; row++){
+                img.setRGB(col,row,copy[col][row].getRGB());
+
+            }
+        }
+    }
+
     public static int contractRGB(int[] rgb){
         return new Color(rgb[0],rgb[1],rgb[2]).getRGB();
     }

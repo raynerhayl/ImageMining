@@ -3,13 +3,13 @@
  */
 public class Mask {
 
-        int[][] m;
+    double[][] m;
 
-        public Mask(int[][] m){
+        public Mask(double[][] m){
             this.m = m;
         }
 
-        public int[][] getM(){
+        public double[][] getM(){
             return m;
         }
 }
