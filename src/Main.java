@@ -25,7 +25,7 @@ public class Main {
         UI.addButton("Noise Removal", this::noiseRemoval);
         UI.addButton("DeBlur", this::deBlur);
         UI.addButton("Galaxy", this::galaxy);
-        UI.addSlider("Threshold Strength",125,255,20,(double v)->{
+        UI.addSlider("Threshold Strength",0,255,125,(double v)->{
             galaxy.setThreshold((int)v);
             if(galaxy.isImgSet()){
 
