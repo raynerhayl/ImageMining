@@ -10,7 +10,7 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-src/FaceDetection.java
+
 test/face/cmu00019.pgm
 test/face/cmu00020.pgm
 test/face/cmu00021.pgm
