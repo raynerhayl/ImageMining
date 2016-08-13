@@ -19,12 +19,12 @@ public class FaceDetection {
     boolean addingRegions = false;
     boolean clicked = false;
     Point clickedPos;
-    Point oldPos = new Point(0,0);
+    Point oldPos = new Point(0, 0);
 
 
     double height;
     double width;
-    BufferedImage img ;
+    BufferedImage img;
 
     List<Region> mRegions = new ArrayList<Region>();
 
@@ -32,32 +32,34 @@ public class FaceDetection {
         UI.initialise();
         UI.addButton("Parse Training Set", this::parseSets);
         UI.addButton("Create Regions", this::createRegions);
+        UI.addButton("Save Regions", this::saveRegions);
+        UI.addButton("Load Regions",this::loadRegions);
         UI.setMouseMotionListener(this::mouseMoved);
 
     }
 
-    public void mouseMoved(String action, double x, double y){
-        if(action.equals("dragged")){
-            UI.drawImage(img,0,0,width,height);
-            for(Region r: mRegions){
-                UI.drawRect(r.left*width,r.top*height,r.width*width,r.height*height);
+    public void mouseMoved(String action, double x, double y) {
+        if (action.equals("dragged")) {
+            UI.drawImage(img, 0, 0, width, height);
+            for (Region r : mRegions) {
+                UI.drawRect(r.left * width, r.top * height, r.width * width, r.height * height);
             }
             UI.setColor(Color.red);
             //UI.invertRect(clickedPos.x,clickedPos.y,oldPos.x-clickedPos.x,oldPos.y-clickedPos.y);
-            UI.drawRect(clickedPos.x,clickedPos.y,x-clickedPos.x,y-clickedPos.y);
-            oldPos = new Point((int)x,(int)y);
-        } else if(addingRegions){
-            if(action.equals("pressed")){
+            UI.drawRect(clickedPos.x, clickedPos.y, x - clickedPos.x, y - clickedPos.y);
+            oldPos = new Point((int) x, (int) y);
+        } else if (addingRegions) {
+            if (action.equals("pressed")) {
                 clicked = true;
-                clickedPos = new Point((int)x, (int)y);
-                oldPos = new Point((int)x, (int)y);
-            } else if(action.equals("released")){
+                clickedPos = new Point((int) x, (int) y);
+                oldPos = new Point((int) x, (int) y);
+            } else if (action.equals("released")) {
                 clicked = false;
                 UI.setColor(Color.red);
-                Region nR = new Region(clickedPos.x/width,clickedPos.y/height,(x-clickedPos.x)/width,(y-clickedPos.y)/height);
+                Region nR = new Region(clickedPos.x / width, clickedPos.y / height, (x - clickedPos.x) / width, (y - clickedPos.y) / height);
                 mRegions.add(nR);
-                for(Region r: mRegions){
-                    UI.drawRect(r.left*width,r.top*height,r.width*width,r.height*height);
+                for (Region r : mRegions) {
+                    UI.drawRect(r.left * width, r.top * height, r.width * width, r.height * height);
                 }
                 UI.setColor(Color.black);
             }
@@ -66,17 +68,17 @@ public class FaceDetection {
     }
 
 
-    public void createRegions(){
+    public void createRegions() {
         try {
-             img = ImageIO.read(new File("./train/face/face00001.pgm"));
-             width = img.getWidth()*10;
-             height = img.getHeight()*10;
+            img = ImageIO.read(new File("./train/face/face00001.pgm"));
+            width = img.getWidth() * 10;
+            height = img.getHeight() * 10;
 
             addingRegions = true;
 
             mRegions = new ArrayList<Region>();
 
-            UI.drawImage(img,0,0,width,height);
+            UI.drawImage(img, 0, 0, width, height);
 
         } catch (IOException ex) {
 
@@ -103,36 +105,16 @@ public class FaceDetection {
 
         UI.println("Loading done");
 
-        double width = faceImages.get(0).getWidth()*10;
-        double height = faceImages.get(0).getHeight()*10;
-        UI.drawImage(faceImages.get(0),0,0,width,height);
-
-        // 65 c 35 e
-        /*Region[] regions = new Region[]{new Region(0, 0, (int) (width * (4.0 / 10.0)), (int) (height * (1.0 / 3.0))),
-                new Region((int) (width * (6.0 / 10.0)), 0, (int) (width * (4.0 / 10.0)), (int) (height * (1.0 / 3.0))),
-                new Region((int) (width / 4.0), (int) (height * (2.0 / 3.0)), (int) (width / 2.0), (int) (height * (1.0 / 3.0))),
-                new Region((int) (width * (4.0 / 10.0)), (int) (height * (1.0 / 8.0)), (int) (width * (2.0 / 10.0)), (int) (height * (13.0 / 24.0)))
-        };*/
-
-        Region[] regions = new Region[]{new Region(0, 0, (int) (width * (4.0 / 10.0)), (int) (height * (1.0 / 3.0))),
-                new Region((int) (width * (6.0 / 10.0)), 0, (int) (width * (4.0 / 10.0)), (int) (height * (1.0 / 3.0))),
-                new Region((int) (0), (int) (height * (2.0 / 3.0)), (int) (width), (int) (height * (1.0 / 3.0))),
-                new Region((int) (width * (3.0 / 10.0)), (int) (height * (1.0 / 8.0)), (int) (width * (4.0 / 10.0)), (int) (height * (7.0/8.0)))
-        };
-
-        //(int) (height * (13.0 / 24.0)
+        double width = faceImages.get(0).getWidth() * 10;
+        double height = faceImages.get(0).getHeight() * 10;
+        UI.drawImage(faceImages.get(0), 0, 0, width, height);
 
         UI.setColor(Color.red);
-
-        for(int r = 0; r < regions.length; r++){
-            Region region = regions[r];
-            UI.drawRect(region.left,region.top,region.width,region.height);
-        }
 
         List<double[]> trainStats = new ArrayList<double[]>();
         List<double[]> testStats = new ArrayList<double[]>();
 
-        for (int i = 0; i < Math.max(Math.max(testFaceImages.size(),testNonFaceImages.size()),Math.max(faceImages.size(), nonFaceImages.size())); i++) {
+        for (int i = 0; i < Math.max(Math.max(testFaceImages.size(), testNonFaceImages.size()), Math.max(faceImages.size(), nonFaceImages.size())); i++) {
             if (i < faceImages.size()) {
                 trainStats.add(parseImage(faceImages.get(i), 1));
 
@@ -145,7 +127,7 @@ public class FaceDetection {
 
 
             if (i < testFaceImages.size()) {
-                testStats.add(parseImage(testFaceImages.get(i),1));
+                testStats.add(parseImage(testFaceImages.get(i), 1));
             }
             if (i < testNonFaceImages.size()) {
                 testStats.add(parseImage(testNonFaceImages.get(i), 0));
@@ -164,21 +146,21 @@ public class FaceDetection {
 
             Writer scan = new BufferedWriter(new FileWriter(filename));
 
-            for(int i = 0; i < 2*mRegions.size(); i++){
-                scan.write(i+", ");
+            for (int i = 0; i < 2 * mRegions.size(); i++) {
+                scan.write(i + ", ");
             }
             scan.write("class\n");
             scan.flush();
 
             for (double[] d : stats) {
                 for (int i = 0; i < d.length - 1; i++) {
-                        String s =  String.format("%03f, ",d[i]);
-                        scan.write(s);
+                    String s = String.format("%03f, ", d[i]);
+                    scan.write(s);
                 }
                 String className = "false";
-                if (d[d.length-1] == Double.MIN_NORMAL) {
+                if (d[d.length - 1] == Double.MIN_NORMAL) {
                     className = "?";
-                } else if (d[d.length-1] > 0) {
+                } else if (d[d.length - 1] > 0) {
                     className = "true";
                 }
                 scan.write(className + "\n");
@@ -190,40 +172,44 @@ public class FaceDetection {
         }
     }
 
-    public Region[] createRegions(double width, double height){
+    public Region[] createRegions(double width, double height) {
         Region[] regions = new Region[mRegions.size()];
 
-        for(int i = 0; i < mRegions.size(); i++){
+        for (int i = 0; i < mRegions.size(); i++) {
             Region r = mRegions.get(i);
-            regions[i] = new Region(r.left*width,r.top*height,r.width*width,r.height*height);
+            regions[i] = new Region(r.left * width, r.top * height, r.width * width, r.height * height);
         }
         return regions;
     }
 
 
-
     public double[] parseImage(BufferedImage img, double className) {
-        double[] stats = new double[2*mRegions.size()+1];
+        double[] stats = new double[2 * mRegions.size() + 1];
 
         double width = img.getWidth();
         double height = img.getHeight();
-        Region[] regions = createRegions(width,height);
+        Region[] regions = createRegions(width, height);
         int statCount = 0;
 
         for (int regionIndex = 0; regionIndex < regions.length; regionIndex++) {
             Region region = regions[regionIndex];
-            double[] pixels = new double[(int)region.width * (int)region.height];
+            double[] pixels = new double[(int) region.width * (int) region.height];
             int pCount = 0;
             double total = 0;
 
-            for (int col = (int)region.left; col < region.left + region.width; col++) {
-                for (int row = (int)region.top; row < region.top + region.height; row++) {
+
+            for (int col = (int) region.left; col < region.left + region.width; col++) {
+                for (int row = (int) region.top; row < region.top + region.height; row++) {
                     double intensity = new Color(img.getRGB(col, row)).getRed();
-                    pixels[pCount] = intensity;
+                    if (pCount < pixels.length) {
+                        pixels[pCount] = intensity;
+                    }
                     total += intensity;
+                    pCount++;
                 }
             }
-            double mean = total / pixels.length;
+
+            double mean = total / (double) pixels.length;
 
             stats[statCount] = mean;
             statCount++;
@@ -232,17 +218,17 @@ public class FaceDetection {
             for (pCount = 0; pCount < pixels.length; pCount++) {
                 deviation += Math.pow(pixels[pCount] - mean, 2);
             }
-            double standardDeviation = Math.sqrt(deviation / pixels.length);
+            double standardDeviation = Math.sqrt(deviation / (double) pixels.length);
             stats[statCount] = standardDeviation;
             statCount++;
         }
 
-        if (className==1) {
-            stats[stats.length-1] = 1;
-        } else if(className == 0) {
-            stats[stats.length-1] = 0;
-        } else if(className == Double.MIN_NORMAL ){
-            stats[stats.length-1] = Double.MIN_NORMAL;
+        if (className == 1) {
+            stats[stats.length - 1] = 1;
+        } else if (className == 0) {
+            stats[stats.length - 1] = 0;
+        } else if (className == Double.MIN_NORMAL) {
+            stats[stats.length - 1] = Double.MIN_NORMAL;
         }
 
         return stats;
@@ -286,8 +272,53 @@ public class FaceDetection {
             height = heightV;
         }
 
-        public void draw(){
-            UI.drawRect(left*width, top *height,width*this.width,height*this.height);
+        public void draw() {
+            UI.drawRect(left * width, top * height, width * this.width, height * this.height);
+        }
+    }
+
+    public void saveRegions() {
+        String fileName = UI.askString("Filename: ");
+
+        try {
+
+            Writer scan = new BufferedWriter(new FileWriter(fileName));
+            UI.println(mRegions.size());
+            for (Region r : mRegions) {
+                UI.println(r.left+" "+r.top);
+                scan.write(r.left + " " + r.top + " " + r.width + " " + r.height+"\n");
+                scan.flush();
+            }
+            scan.close();
+        } catch (IOException e) {
+
+        }
+    }
+
+    public void loadRegions() {
+
+
+        String fileName = UI.askString("Filename: ");
+        mRegions = new ArrayList<Region>();
+        try{
+            img = ImageIO.read(new File("./train/face/face00001.pgm"));
+            width = img.getWidth() * 10;
+            height = img.getHeight() * 10;
+
+            Scanner scan = new Scanner(new File(fileName));
+            while(scan.hasNextLine()){
+                Scanner lineScanner = new Scanner(scan.nextLine());
+                Region r = new Region(lineScanner.nextDouble(),lineScanner.nextDouble(),lineScanner.nextDouble(),lineScanner.nextDouble());
+                mRegions.add(r);
+            }
+
+            UI.drawImage(img, 0, 0, width, height);
+            UI.setColor(Color.red);
+            for (Region r : mRegions) {
+                UI.drawRect(r.left * width, r.top * height, r.width * width, r.height * height);
+            }
+        } catch (IOException e){
+
         }
     }
 
